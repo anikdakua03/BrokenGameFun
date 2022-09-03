@@ -1,21 +1,17 @@
 import random
-
-
-
-def comp_given():
-    print("I'm giving  == >" + random.randrange(1,11))
+    
 
 def user_given():
     n = int(input("Enter your choice between 1 - 10  == > "))
-    if n >= 1 and n <= 10:
+    if n >= 1 and n < 11:
         return n
     else:
         print("Please enter valid number!!!!")
         user_given()
 
 
-def final_check():
-    if game() == 1 or comp_game == 1:
+def final_check(n):
+    if n == 0:
         print("Hurrayyyy!!!!  " + name.upper()+"  You  win")  
     else:
         print("Hehe !!! You have lost !!!")
@@ -35,55 +31,71 @@ def game(num):
         summ = []
         first , rem = num , 100
         summ.append(first)
-        print("\n Total sum after users turn == > " , sum(summ))
+        print(f"\n Total sum after {name}'s turn == > " , sum(summ))
         summ.append((11-first))
         print("\n Total sum after comps turn == > " , sum(summ))
         rem -= 11
-        if sum(summ) != 100 or sum(summ) < 100 :  
+        while sum(summ) != 100 or sum(summ) < 100 :  
             # have to check the remaininig sum and check if it is between 1-10 then comp will give the rem and will win
+            n = user_given()
+            rem -= n
+            summ.append(n)
+            print(f"\nTotal sum after {name}'s turn == > " , sum(summ))
+
             if rem > 10 :
-                n = user_given()
-                rem -= n
-                summ.append(n)
-                print("\nTotal sum after users turn == > " , sum(summ))
                 summ.append(11 - n)
                 print("\nTotal sum after comps turn == > " , sum(summ))
                 rem -= (11 - n)
-                # not getting why it is going out of if after one execution !!!!! Have to recheck again !!!!!
-                          
             else:
-                summ.append(rem)  # the winning number for comp        
+                summ.append(rem)  # the winning number for comp                       
         
     else:
         print("Please enter valid number!!!!\n")
-        restart()
+        game(num)
 
     if len(summ) % 2 != 0:
-        return 1
+        final_check(0)  # 0 for user
+
     else:
-        return 0
+        final_check(1)  # 1 for comp 
       
-def comp_game(num):
-    summ = []
-    first = num
-    summ.append(first)
-    summ.append((11-first))
-    while sum(summ) != 100 :
+def comp_game():
+    num = random.randrange(1,11)
+    print("I'm starting with  == > ",num) 
+    if num >= 1 or num <= 10 : # taking count of that comp is first
+        summ = []
+        first , rem = num , 100
+        summ.append(first)
+        print("\n Total sum after my turn == > " , sum(summ))
         n = user_given()
         summ.append(n)
-        summ.append(11 - n)
-    
-    if len(summ) % 2 != 0:
-        return 0
-    else:
-        return 1
+        print(f"\n Total sum after {name}'s turn == > " , sum(summ))
+        rem -= (first + n)
+        while sum(summ) != 100 or sum(summ) < 100 :  
+            # have to check the remaininig sum and check if it is between 1-10 then comp will give the rem and will win
+            if rem > 10 :
+                summ.append(11 - n)
+                print("\nTotal sum after comps turn == > " , sum(summ))
+                rem -= (11 - n)
+                n = user_given()
+                rem -= n
+                summ.append(n)
+                print(f"\nTotal sum after {name}'s turn == > " , sum(summ))
+            else:
+                summ.append(rem)  # the winning number for comp                       
+
+    if sum(summ) == 100 :
+        if len(summ) % 2 == 0:
+            final_check(0) # 0 for user
+
+        else:
+            final_check(1)  # 1 for comp
 
 def turn():
     print("\n\nSo will you play first or me  ?? .")
     print("If you first then type y or yes else type N or no!!\n")
     res=input("Type your response : ")
     if (res.lower() == 'y' or res.lower() == 'yes') : 
-        true=1
         no=int(input("Enter your choice between 1 - 10  == > "))
         if no >= 1 and no <= 10:
             game(no)
@@ -91,9 +103,7 @@ def turn():
             print("Please enter valid number !!!!\n\n")
             turn()
     else:
-        true=0
-        comp_no=random.randrange(1,11)
-        comp_game(comp_no)
+        comp_game()
     
 def start(name):
     print("Hello , "+name.upper()+ "  welcome to the broken game !!!")
